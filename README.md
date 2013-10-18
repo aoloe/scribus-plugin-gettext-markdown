@@ -10,6 +10,14 @@ It must at least support:
 - rendering links in a printer friendly way
 - blockquotes as intended paragraph
 
+## Install
+
+Clone the `scribus-plugin-gettext-markdown` repository and put – or symlink – the `src` directory into `scribus/plugins/gettext/` as `markdown`. Then add 
+
+    ADD_SUBDIRECTORY(markdown)
+
+to `CMakeList` file in `scribus/plugins/gettext/`.
+
 ## Specifications
 
 This specification follows the structure of (John Gruber's Markdown Syntax](http://daringfireball.net/projects/markdown/syntax) specification.
