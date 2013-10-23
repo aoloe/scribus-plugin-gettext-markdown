@@ -10,6 +10,8 @@ It must at least support:
 - rendering links in a printer friendly way
 - blockquotes as intended paragraph
 
+All information concerning this plugin's code is in `src/README.md`.
+
 ## Install
 
 Clone the `scribus-plugin-gettext-markdown` repository and put – or symlink – the `src` directory into `scribus/plugins/gettext/` as `markdown`. Then add 
