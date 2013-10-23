@@ -6,6 +6,10 @@
 
 #include <gtwriter.h>
 
+extern "C" {
+#include "markdown_parser.h"
+}
+
 class MarkdownReader
 {
 public:

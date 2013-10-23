@@ -11,3 +11,5 @@ if you need to generate it again, you should:
 
 - compile greg
 - run `greg -o markdown_parer.c markdown_parser.leg`
+- create the parser's public infterace `markdown_parser.h`. this is a C header file that will be included in the C++ class that launches the parser (`markdownreader.h`)
+- in `markdownreader.h`include `markdown_parser.h` as a C library
