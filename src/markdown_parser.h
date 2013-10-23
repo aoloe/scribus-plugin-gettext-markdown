@@ -2,6 +2,15 @@
 * \brief Markdown parser's public interface.
 */
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
+#include <stdlib.h>
+#include <assert.h>
+#include "pmh_definitions.h"
 
 /**
 * \brief Parse Markdown text, return elements

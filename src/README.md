@@ -22,4 +22,4 @@ if you need to generate it again, you should:
         pmh_element_type pmh_element_type_from_name(char *name);
   (For now I'm keeping the `pmh_` prefix from the `peg-markdown-highlight` project.)
 
-
+- For now, copy `pmh_definitions.h`from `peg-markdown-highlight` and include it in `markdown_parser.h` (please check that all definitions in there are really needed!)

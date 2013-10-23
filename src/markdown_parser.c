@@ -26,7 +26,7 @@ struct _GREG;
  * from the PEG grammar.
  */
 
-#include "pmh_parser.h"
+#include "markdown_parser.h"
 
 #ifndef pmh_DEBUG_OUTPUT
 #define pmh_DEBUG_OUTPUT 0
@@ -999,8 +999,9 @@ static void yy_input_func(char *buf, int *result, int max_size,
     }
 }
 
- * End of code to be inserted into the beginning of the parser code generated
+/* End of code to be inserted into the beginning of the parser code generated
  * from the PEG grammar.
+ */
 
 
 #define elem(x)     mk_element((parser_data *)G->data, x, thunk->begin, thunk->end)
