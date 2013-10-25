@@ -28,6 +28,9 @@ struct _GREG;
 
 #include "markdown_parser.h"
 
+// TODO: remove this line!
+// #define pmh_DEBUG_OUTPUT 1
+
 #ifndef pmh_DEBUG_OUTPUT
 #define pmh_DEBUG_OUTPUT 0
 #endif
@@ -547,6 +550,64 @@ void pmh_markdown_to_elements(char *text, int extensions,
     *out_result = (pmh_element**)result;
 }
 
+/**
+ * ale: this started as a copy of pmh_markdown_to_elements()
+ */
+void pmh_markdown_to_parsed(char *text, int extensions,
+                              pmh_element **out_result[])
+{
+    char *text_copy = NULL;
+    unsigned long *strip_positions = NULL;
+    size_t strip_positions_len = 0;
+    int text_copy_len = strcpy_preformat(text, &text_copy, &strip_positions,
+                                         &strip_positions_len);
+    
+    pmh_realelement *parsing_elem = (pmh_realelement *)
+                                    malloc(sizeof(pmh_realelement));
+    parsing_elem->type = pmh_RAW;
+    parsing_elem->pos = 0;
+    parsing_elem->end = text_copy_len;
+    parsing_elem->next = NULL;
+    
+    parser_data *p_data = mk_parser_data(
+        text,
+        strip_positions,
+        strip_positions_len,
+        text_copy,
+        parsing_elem,
+        0,
+        extensions,
+        NULL,
+        NULL
+    );
+    pmh_realelement **result = p_data->head_elems;
+    
+    if (*text_copy != '\0')
+    {
+        // Get reference definitions into p_data->references
+        parse_references(p_data);
+        
+        // Reset parser state to beginning of input
+        p_data->offset = 0;
+        p_data->current_elem = p_data->elem_head;
+        
+        // Parse whole document
+        parse_markdown(p_data);
+        
+        #if pmh_DEBUG_OUTPUT
+        print_raw_blocks(text_copy, result);
+        #endif
+        
+        process_raw_blocks(p_data);
+    }
+    
+    free(strip_positions);
+    free(p_data);
+    free(parsing_elem);
+    free(text_copy);
+    
+    *out_result = (pmh_element**)result;
+}
 
 
 /*
@@ -6596,10 +6657,10 @@ static void _parse(parser_data *p_data, yyrule start_rule)
 {
     GREG *g = YY_NAME(parse_new)(p_data);
     if (start_rule == NULL)
-        YY_NAME(parse)(g);
+        YY_NAME(parse)(g); // yyparse(g)
     else
-        YY_NAME(parse_from)(g, start_rule);
-    YY_NAME(parse_free)(g);
+        YY_NAME(parse_from)(g, start_rule); // yyparse_from(g, start_rule)
+    YY_NAME(parse_free)(g); // yyparse_free(g)
     
     pmh_PRINTF("\n\n");
 }

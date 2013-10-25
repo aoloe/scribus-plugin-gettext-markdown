@@ -27,6 +27,9 @@
 #include <QString>
 #include <QByteArray>
 #include <QTextCodec> 
+#include <QVector> 
+#include <QDebug>
+
 #include "markdownreader.h"
 #include "util.h" // for loadRawText
 
@@ -68,9 +71,60 @@ void MarkdownReader::parse(QString filename)
 
             char *content_cstring = strdup((char *)rawText.data());
 
+            QString text = QString::fromUtf8(rawText);
+
             pmh_element **result;
 
-            pmh_markdown_to_elements(content_cstring, pmh_EXT_NONE, &result);
+            // qDebug() << "content_cstring" << content_cstring;
+            pmh_markdown_to_parsed(content_cstring, pmh_EXT_NONE, &result);
+
+            // pmh_realelement *cursor = (pmh_realelement*)result[pmh_ALL];
+            // pmh_element *cursor = result[pmh_ALL];
+            // pmh_element *cursor = result[pmh_RAW_LIST];
+            QVector<pmh_element> list;
+            for (int i = pmh_LINK; i <= pmh_NOTE; i++) {
+                pmh_element *cursor = result[i];
+                while (cursor != NULL) {
+                    // pmh_realelement *current = cursor;
+                    // pmh_element *current = cursor;
+                    list.append(*cursor);
+                    cursor = cursor->next;
+                    /*
+                    qDebug() << "pos:" << current->pos;
+                    QString snippet = text.mid(current->pos, current->end - current->pos);
+                    qDebug() << "snippet:" << snippet;
+                    */
+                }
+            }
+            // TODO: sort by pos!
+            // qDebug() << "list:" << list;
+            foreach (pmh_element item, list)
+            {
+                qDebug() << "----";
+                qDebug() << "type:" << item.type;
+                qDebug() << "pos:" << item.pos;
+                qDebug() << "end:" << item.end;
+                qDebug() << "text:" << text.mid(item.pos, item.end - item.pos);
+            }
+
+
+            /*
+            pmh_realelement *cursor = (pmh_realelement*)elems[pmh_ALL];
+            while (cursor != NULL) {
+                pmh_realelement *current = cursor;
+                cursor = cursor->all_elems_next;
+                if (tofree->text != NULL)
+                    free(tofree->text);
+                if (tofree->label != NULL)
+                    free(tofree->label);
+                if (tofree->address != NULL)
+                    free(tofree->address);
+                free(tofree);
+            }
+            elems[pmh_ALL] = NULL;
+            */
+
+            qDebug() << result;
 
             if (result != NULL)
                 pmh_free_elements(result);

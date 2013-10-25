@@ -16,6 +16,25 @@
 * \brief Parse Markdown text, return elements
 * 
 * Parses the given Markdown text and returns the results as an
+* array of linked lists of elements, indexed by position.
+* 
+* \param[in]  text        The Markdown text to parse for highlighting.
+* \param[in]  extensions  The extensions to use in parsing (a bitfield
+*                         of pmh_extensions values).
+* \param[out] out_result  A pmh_element array, indexed by position, containing
+*                         the results of the parsing (linked lists of elements).
+*                         You must pass this to pmh_free_parsed() when it's
+*                         not needed anymore.
+* 
+* \sa pmh_element_type
+*/
+void pmh_markdown_to_parsed(char *text, int extensions,
+                              pmh_element **out_result[]);
+
+/**
+* \brief Parse Markdown text, return elements
+* 
+* Parses the given Markdown text and returns the results as an
 * array of linked lists of elements, indexed by type.
 * 
 * \param[in]  text        The Markdown text to parse for highlighting.
