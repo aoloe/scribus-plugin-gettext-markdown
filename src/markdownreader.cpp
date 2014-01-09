@@ -73,32 +73,31 @@ void MarkdownReader::parse(QString filename)
 
             QString text = QString::fromUtf8(rawText);
 
-            pmh_element **result;
+            mp_element **result;
 
             // qDebug() << "content_cstring" << content_cstring;
-            pmh_markdown_to_parsed(content_cstring, pmh_EXT_NONE, &result);
+            mp_markdown_to_elements(content_cstring, mp_EXT_NONE, &result);
 
-            // pmh_realelement *cursor = (pmh_realelement*)result[pmh_ALL];
-            // pmh_element *cursor = result[pmh_ALL];
-            // pmh_element *cursor = result[pmh_RAW_LIST];
-            QVector<pmh_element> list;
-            for (int i = pmh_LINK; i <= pmh_NOTE; i++) {
-                pmh_element *cursor = result[i];
+            /*
+            // mp_realelement *cursor = (mp_realelement*)result[mp_ALL];
+            // mp_element *cursor = result[mp_ALL];
+            // mp_element *cursor = result[mp_RAW_LIST];
+            QVector<mp_element> list;
+            for (int i = mp_LINK; i <= mp_NOTE; i++) {
+                mp_element *cursor = result[i];
                 while (cursor != NULL) {
-                    // pmh_realelement *current = cursor;
-                    // pmh_element *current = cursor;
+                    // mp_realelement *current = cursor;
+                    // mp_element *current = cursor;
                     list.append(*cursor);
                     cursor = cursor->next;
-                    /*
                     qDebug() << "pos:" << current->pos;
                     QString snippet = text.mid(current->pos, current->end - current->pos);
                     qDebug() << "snippet:" << snippet;
-                    */
                 }
             }
             // TODO: sort by pos!
             // qDebug() << "list:" << list;
-            foreach (pmh_element item, list)
+            foreach (mp_element item, list)
             {
                 qDebug() << "----";
                 qDebug() << "type:" << item.type;
@@ -106,29 +105,15 @@ void MarkdownReader::parse(QString filename)
                 qDebug() << "end:" << item.end;
                 qDebug() << "text:" << text.mid(item.pos, item.end - item.pos);
             }
-
-
-            /*
-            pmh_realelement *cursor = (pmh_realelement*)elems[pmh_ALL];
-            while (cursor != NULL) {
-                pmh_realelement *current = cursor;
-                cursor = cursor->all_elems_next;
-                if (tofree->text != NULL)
-                    free(tofree->text);
-                if (tofree->label != NULL)
-                    free(tofree->label);
-                if (tofree->address != NULL)
-                    free(tofree->address);
-                free(tofree);
-            }
-            elems[pmh_ALL] = NULL;
             */
 
             qDebug() << result;
 
+            /*
             if (result != NULL)
-                pmh_free_elements(result);
+                mp_free_elements(result);
             free(content_cstring);
+            */
         }
     }
 }

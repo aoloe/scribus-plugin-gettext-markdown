@@ -93,4 +93,14 @@ struct mp_Element
 };
 typedef struct mp_Element mp_element;
 
+/**
+* \brief Bitfield enumeration of supported Markdown extensions.
+*/
+enum mp_extensions
+{
+    mp_EXT_NONE    = 0,        /**< No extensions */
+    mp_EXT_NOTES   = (1 << 0)  /**< A footnote syntax like that of Pandoc or
+                                     PHP Markdown Extra */
+};
 
+#endif
