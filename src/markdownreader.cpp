@@ -33,6 +33,13 @@
 #include "markdownreader.h"
 #include "util.h" // for loadRawText
 
+#include "plugins/gettext/htmlim/htmlreader.h"
+
+// TODO: check which of these three are really needed
+#include "scribusstructs.h"
+#include "gtparagraphstyle.h" // Style for paragraph based formatting.
+#include "gtframestyle.h"
+
 MarkdownReader::MarkdownReader(gtWriter *writer, QString encoding, bool textOnly)
 {
     this->writer = writer;
@@ -47,7 +54,7 @@ MarkdownReader::~MarkdownReader()
 void MarkdownReader::parse(QString filename)
 {
     QString text;
-	QByteArray rawText;
+    QByteArray rawText;
     QTextCodec *codec;
     if (loadRawText(filename, rawText))
     {
@@ -65,70 +72,29 @@ void MarkdownReader::parse(QString filename)
             text = codec->toUnicode(rawText);
             writer->appendUnstyled(text);
         } else {
-            // QString content = document->toPlainText();
-            // QByteArray ba = content.toLatin1();
-            // char *content_cstring = strdup((char *)ba.data());
-
-            char *content_cstring = strdup((char *)rawText.data());
-
-            QString text = QString::fromUtf8(rawText);
-
-            pmh_element **result;
-
-            // qDebug() << "content_cstring" << content_cstring;
-            pmh_markdown_to_parsed(content_cstring, pmh_EXT_NONE, &result);
-
-            // pmh_realelement *cursor = (pmh_realelement*)result[pmh_ALL];
-            // pmh_element *cursor = result[pmh_ALL];
-            // pmh_element *cursor = result[pmh_RAW_LIST];
-            QVector<pmh_element> list;
-            for (int i = pmh_LINK; i <= pmh_NOTE; i++) {
-                pmh_element *cursor = result[i];
-                while (cursor != NULL) {
-                    // pmh_realelement *current = cursor;
-                    // pmh_element *current = cursor;
-                    list.append(*cursor);
-                    cursor = cursor->next;
-                    /*
-                    qDebug() << "pos:" << current->pos;
-                    QString snippet = text.mid(current->pos, current->end - current->pos);
-                    qDebug() << "snippet:" << snippet;
-                    */
-                }
-            }
-            // TODO: sort by pos!
-            // qDebug() << "list:" << list;
-            foreach (pmh_element item, list)
+            if (encoding.isEmpty())
             {
-                qDebug() << "----";
-                qDebug() << "type:" << item.type;
-                qDebug() << "pos:" << item.pos;
-                qDebug() << "end:" << item.end;
-                qDebug() << "text:" << text.mid(item.pos, item.end - item.pos);
+                codec = QTextCodec::codecForLocale();
             }
-
-
-            /*
-            pmh_realelement *cursor = (pmh_realelement*)elems[pmh_ALL];
-            while (cursor != NULL) {
-                pmh_realelement *current = cursor;
-                cursor = cursor->all_elems_next;
-                if (tofree->text != NULL)
-                    free(tofree->text);
-                if (tofree->label != NULL)
-                    free(tofree->label);
-                if (tofree->address != NULL)
-                    free(tofree->address);
-                free(tofree);
+            else
+            {
+                codec = QTextCodec::codecForName(encoding.toLocal8Bit());
             }
-            elems[pmh_ALL] = NULL;
-            */
+            text = codec->toUnicode(rawText);
 
-            qDebug() << result;
+			// TODO: use cpp-markdown to convert from md to html
 
-            if (result != NULL)
-                pmh_free_elements(result);
-            free(content_cstring);
+            text = "<html>\n <body>\n <h1>A test</h1>\n <p>My test with <i>some italics</i> and <b>some bold</b>.</p>\n </body>\n </html>";
+
+            gtFrameStyle *fstyle = writer->getDefaultStyle();
+            gtParagraphStyle *pstyle = new gtParagraphStyle(*fstyle);
+            pstyle->setName("HTML_default");
+
+            HTMLReader* handler = new HTMLReader(pstyle, writer, textOnly);
+            handler->parseString(text);
+            delete handler;
+
+
         }
     }
 }

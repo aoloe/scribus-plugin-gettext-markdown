@@ -18,7 +18,7 @@ Clone the `scribus-plugin-gettext-markdown` repository and put â€“ or symlink â€
 
     ADD_SUBDIRECTORY(markdown)
 
-to `CMakeList` file in `scribus/plugins/gettext/`.
+to the `CMakeLists.txt` file in `scribus/plugins/gettext/`.
 
 ## Specifications
 
