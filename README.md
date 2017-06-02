@@ -124,3 +124,7 @@ Automatic links are reformatted by removing the starting and end sign (&lt;, &gt
 
 We will support the markdown escaping.
 
+
+## Interesting reads
+
+- Hacker News discussion about [A Formal Spec for GitHub Flavored Markdown](https://news.ycombinator.com/item?id=13869484)
